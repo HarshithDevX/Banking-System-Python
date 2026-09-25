@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Change Security PIN{% endblock %}
+
+{% block content %}
+<div style="max-width: 520px; margin: 0 auto;">
+    <div style="margin-bottom: 24px;">
+        <a href="{{ url_for('dashboard') }}" style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">
+            &larr; Back to Dashboard
+        </a>
+        <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.02em;">
+            Change Security PIN
+        </h1>
+        <p style="font-size: 0.9rem; color: var(--text-muted);">
+            Update your 4-digit secret authorization PIN.
+        </p>
+    </div>
+
+    <div class="card">
+        <form method="POST" action="{{ url_for('change_pin') }}">
+            <div class="form-group">
+                <label for="current_pin" class="form-label">
+                    Current PIN
+                </label>
+                <div class="input-group has-icon">
+                    <span class="input-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    </span>
+                    <input type="password"
+                           id="current_pin"
+                           name="current_pin"
+                           class="form-control is-mono"
+                           placeholder="••••"
+                           data-numeric="true"
+                           maxlength="4"
+                           required
+                           autofocus>
+                </div>
+                <div class="form-helper">Enter your existing 4-digit PIN for verification.</div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                <div class="form-group">
+                    <label for="newPin" class="form-label">
+                        New 4-Digit PIN
+                    </label>
+                    <div class="input-group has-icon">
+                        <span class="input-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        </span>
+                        <input type="password"
+                               id="newPin"
+                               name="new_pin"
+                               class="form-control is-mono"
+                               placeholder="••••"
+                               data-numeric="true"
+                               maxlength="4"
+                               required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPin" class="form-label">
+                        Confirm New PIN
+                    </label>
+                    <div class="input-group has-icon">
+                        <span class="input-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </span>
+                        <input type="password"
+                               id="confirmPin"
+                               name="confirm_pin"
+                               class="form-control is-mono"
+                               placeholder="••••"
+                               data-numeric="true"
+                               maxlength="4"
+                               required>
+                    </div>
+                </div>
+            </div>
+
+            <div id="pinMatchNotice" style="font-size: 0.8rem; font-weight: 600; margin-top: -10px; margin-bottom: 16px;"></div>
+
+            <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top: 8px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Update Secret PIN</span>
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

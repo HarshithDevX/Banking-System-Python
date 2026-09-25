@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Fund Transfer{% endblock %}
+
+{% block content %}
+<div style="max-width: 580px; margin: 0 auto;">
+    <div style="margin-bottom: 24px;">
+        <a href="{{ url_for('dashboard') }}" style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">
+            &larr; Back to Dashboard
+        </a>
+        <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.02em;">
+            Fund Transfer
+        </h1>
+        <p style="font-size: 0.9rem; color: var(--text-muted);">
+            Instant inter-account transfer to another Apex Banking account holder.
+        </p>
+    </div>
+
+    <!-- Balance Reminder Card -->
+    <div style="background-color: var(--primary-subtle); border: 1px solid #bfdbfe; border-radius: var(--radius-md); padding: 14px 18px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.88rem; font-weight: 600; color: var(--primary);">Available Transfer Balance</span>
+        <span style="font-size: 1.15rem; font-weight: 800; color: var(--primary); font-family: var(--font-mono);">
+            ₹{{ "%.2f"|format(account.balance) }}
+        </span>
+    </div>
+
+    <div class="card">
+        <form method="POST" action="{{ url_for('transfer') }}">
+            <div class="form-group">
+                <label for="receiver_acc" class="form-label">
+                    Beneficiary Account Number
+                    <span class="form-label-desc">(6-digit recipient account)</span>
+                </label>
+                <div class="input-group has-icon">
+                    <span class="input-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    </span>
+                    <input type="text"
+                           id="receiver_acc"
+                           name="receiver_acc"
+                           class="form-control is-mono"
+                           placeholder="e.g. 104523"
+                           data-numeric="true"
+                           maxlength="6"
+                           value="{{ request.form.get('receiver_acc', '') }}"
+                           required
+                           autofocus>
+                </div>
+                <div class="form-helper">Self-transfers are not permitted. Receiver must be an active account.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="amountInput" class="form-label">
+                    Transfer Amount (in ₹)
+                </label>
+                <div class="input-group has-icon">
+                    <span class="input-icon" style="font-weight: 700; color: var(--text-muted);">₹</span>
+                    <input type="number"
+                           id="amountInput"
+                           name="amount"
+                           class="form-control is-mono"
+                           step="0.01"
+                           min="1"
+                           max="{{ account.balance }}"
+                           placeholder="0.00"
+                           required>
+                </div>
+                <div class="form-helper">Maximum transferable amount: ₹{{ "%.2f"|format(account.balance) }}.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="custom_note" class="form-label">
+                    Transfer Note / Purpose
+                    <span class="form-label-desc">(Optional)</span>
+                </label>
+                <input type="text"
+                       id="custom_note"
+                       name="custom_note"
+                       class="form-control"
+                       placeholder="e.g. Rent share, Project fee, Reimbursement"
+                       maxlength="100">
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top: 12px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
+                <span>Authorize & Send Transfer</span>
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

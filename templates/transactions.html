@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Account Statement{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: gap; gap: 16px;">
+    <div>
+        <a href="{{ url_for('dashboard') }}" style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">
+            &larr; Back to Dashboard
+        </a>
+        <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.02em;">
+            Transaction Statement
+        </h1>
+        <p style="font-size: 0.9rem; color: var(--text-muted);">
+            Complete, chronological history of deposits, withdrawals, and inter-account transfers.
+        </p>
+    </div>
+    <div style="text-align: right;">
+        <span style="font-size: 0.85rem; color: var(--text-muted);">Current Balance:</span>
+        <div style="font-size: 1.3rem; font-weight: 800; color: var(--primary); font-family: var(--font-mono);">
+            ₹{{ "%.2f"|format(account.balance) }}
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <div>
+            <h2 class="card-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                Audit Log ({{ transactions|length }} Records)
+            </h2>
+            <div class="card-subtitle">Real-time ledger entries from SQLite database</div>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline" onclick="window.print()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            <span>Print Statement</span>
+        </button>
+    </div>
+
+    {% if transactions %}
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">Ref ID</th>
+                        <th style="width: 170px;">Date & Time</th>
+                        <th style="width: 150px;">Transaction Type</th>
+                        <th>Description / Remarks</th>
+                        <th style="text-align: right; width: 140px;">Amount (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for txn in transactions %}
+                        <tr>
+                            <td style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">
+                                #{{ txn.id }}
+                            </td>
+                            <td style="color: var(--text-muted); font-size: 0.82rem; white-space: nowrap;">
+                                {{ txn.created_at }}
+                            </td>
+                            <td>
+                                {% if txn.transaction_type == 'Deposit' %}
+                                    <span class="badge badge-deposit">Deposit</span>
+                                {% elif txn.transaction_type == 'Withdrawal' %}
+                                    <span class="badge badge-withdrawal">Withdrawal</span>
+                                {% elif txn.transaction_type == 'Transfer Sent' %}
+                                    <span class="badge badge-transfer-sent">Transfer Sent</span>
+                                {% elif txn.transaction_type == 'Transfer Received' %}
+                                    <span class="badge badge-transfer-recv">Transfer Recv</span>
+                                {% else %}
+                                    <span class="badge">{{ txn.transaction_type }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ txn.description }}</td>
+                            <td style="text-align: right;">
+                                {% if txn.transaction_type in ['Deposit', 'Transfer Received'] %}
+                                    <span class="amount-credit">+₹{{ "%.2f"|format(txn.amount) }}</span>
+                                {% else %}
+                                    <span class="amount-debit">-₹{{ "%.2f"|format(txn.amount) }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+            <h3 class="empty-state-title">No transactions yet</h3>
+            <p class="empty-state-desc">Your account activity will appear here after your first transaction.</p>
+            <div style="margin-top: 16px;">
+                <a href="{{ url_for('deposit') }}" class="btn btn-primary btn-sm">+ Make a Deposit</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

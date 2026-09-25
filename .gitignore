@@ -2,15 +2,23 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
 
-# Environments
+# Environments & Secrets
 .env
 .venv
 env/
 venv/
 ENV/
 
+# Database files
+database/*.db
+*.db
+*.sqlite
+*.sqlite3
+
 # IDE / Editor files
 .vscode/
 .idea/
 *.swp
+*.bak

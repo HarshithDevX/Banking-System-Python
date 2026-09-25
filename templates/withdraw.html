@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Withdraw Funds{% endblock %}
+
+{% block content %}
+<div style="max-width: 580px; margin: 0 auto;">
+    <div style="margin-bottom: 24px;">
+        <a href="{{ url_for('dashboard') }}" style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">
+            &larr; Back to Dashboard
+        </a>
+        <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.02em;">
+            Withdraw Cash
+        </h1>
+        <p style="font-size: 0.9rem; color: var(--text-muted);">
+            Debit funds from your account safely with balance verification.
+        </p>
+    </div>
+
+    <!-- Balance Reminder Card -->
+    <div style="background-color: var(--surface-alt); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px 18px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.88rem; font-weight: 600; color: var(--text-muted);">Available for Withdrawal</span>
+        <span style="font-size: 1.15rem; font-weight: 800; color: var(--text-main); font-family: var(--font-mono);">
+            ₹{{ "%.2f"|format(account.balance) }}
+        </span>
+    </div>
+
+    <div class="card">
+        <form method="POST" action="{{ url_for('withdraw') }}">
+            <div class="form-group">
+                <label for="amountInput" class="form-label">
+                    Withdrawal Amount (in ₹)
+                </label>
+                <div class="input-group has-icon">
+                    <span class="input-icon" style="font-weight: 700; color: var(--text-muted);">₹</span>
+                    <input type="number"
+                           id="amountInput"
+                           name="amount"
+                           class="form-control is-mono"
+                           step="0.01"
+                           min="1"
+                           max="{{ account.balance }}"
+                           placeholder="0.00"
+                           required
+                           autofocus>
+                </div>
+                <div class="form-helper">Cannot exceed your available balance of ₹{{ "%.2f"|format(account.balance) }}.</div>
+
+                <!-- Quick Amount Chips -->
+                {% if account.balance >= 500 %}
+                    <div class="amount-chips">
+                        <button type="button" class="chip-btn" data-amount="500">₹500</button>
+                        {% if account.balance >= 1000 %}
+                            <button type="button" class="chip-btn" data-amount="1000">₹1,000</button>
+                        {% endif %}
+                        {% if account.balance >= 2000 %}
+                            <button type="button" class="chip-btn" data-amount="2000">₹2,000</button>
+                        {% endif %}
+                        {% if account.balance >= 5000 %}
+                            <button type="button" class="chip-btn" data-amount="5000">₹5,000</button>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="description" class="form-label">
+                    Purpose / Remark
+                    <span class="form-label-desc">(Optional)</span>
+                </label>
+                <input type="text"
+                       id="description"
+                       name="description"
+                       class="form-control"
+                       placeholder="e.g. ATM withdrawal, Bill payment"
+                       maxlength="100">
+            </div>
+
+            <button type="submit" class="btn btn-danger btn-block btn-lg" style="margin-top: 12px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+                <span>Confirm & Withdraw Cash</span>
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
