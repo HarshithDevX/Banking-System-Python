@@ -138,10 +138,13 @@ def login():
     Enforces strict 6-digit account and 4-digit PIN format.
     Displays generic error on failure to prevent user enumeration.
     """
-    if session.get("account_number"):
+    # Only redirect active sessions on GET requests; POST must authenticate submitted credentials
+    if request.method == "GET" and session.get("account_number"):
         return redirect(url_for("dashboard"))
 
     if request.method == "POST":
+        # Clear any prior session state before authenticating new credentials
+        session.clear()
         account_number = request.form.get("account_number", "").strip()
         pin = request.form.get("pin", "").strip()
 
@@ -225,14 +228,35 @@ def register():
             flash(err or "An error occurred while creating your account. Please try again.", "danger")
             return render_template("register.html", active_page="register")
 
-        flash(
-            f"Account created successfully! Your unique Account Number is {new_account_number}. "
-            f"Please keep this number safe as it is required to sign in.",
-            "success"
+        # Clear any prior session state to isolate the new account completely
+        session.clear()
+        session["registered_acc"] = new_account_number
+        session["registered_name"] = name
+
+        # Immediately render dedicated registration success view
+        return render_template(
+            "register_success.html",
+            account_number=new_account_number,
+            name=name,
+            active_page="register"
         )
-        return redirect(url_for("login"))
 
     return render_template("register.html", active_page="register")
+
+
+@app.route("/register-success")
+def register_success():
+    """Fallback registration confirmation page."""
+    acc = session.get("registered_acc")
+    name = session.get("registered_name", "Valued Customer")
+    if not acc:
+        return redirect(url_for("login"))
+    return render_template(
+        "register_success.html",
+        account_number=acc,
+        name=name,
+        active_page="register"
+    )
 
 
 @app.route("/logout")

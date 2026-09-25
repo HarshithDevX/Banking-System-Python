@@ -33,7 +33,7 @@
                            placeholder="e.g. 104523"
                            data-numeric="true"
                            maxlength="6"
-                           value="{{ request.form.get('account_number', '') }}"
+                           value="{{ request.args.get('acc', request.form.get('account_number', '')) }}"
                            required
                            autofocus>
                 </div>

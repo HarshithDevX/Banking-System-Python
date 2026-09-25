@@ -24,6 +24,7 @@ Banking-System/
 │   ├── base.html           # Master Layout (Navigation, Flash Stack, Responsive Shell)
 │   ├── login.html          # Authentication Portal
 │   ├── register.html       # Account Registration with 6-digit Acc Auto-Generation
+│   ├── register_success.html # Registration Confirmation with Generated Account ID
 │   ├── dashboard.html      # Account Dashboard (Balance Card, Quick Actions, Recent Txns)
 │   ├── deposit.html        # Fund Ingestion with Preset Amount Chips
 │   ├── withdraw.html       # Cash Withdrawal with Balance Verification
